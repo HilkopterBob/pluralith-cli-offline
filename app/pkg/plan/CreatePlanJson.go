@@ -46,7 +46,7 @@ func ConvertBinaryPlanToJson(planPath string) (string, error) {
 	functionName := "ConvertBinaryPlanToJson"
 
 	// Constructing command to execute
-	cmd := exec.Command("terraform", append([]string{"show", "-json", planPath})...)
+	cmd := exec.Command("terraform", "show", "-json", planPath)
 
 	// Defining sinks for std data
 	var outputSink bytes.Buffer

@@ -38,19 +38,21 @@ func RunInit(noInputs bool, initData InitData, localRun bool) (bool, InitData, e
 	// Authentication
 	ux.PrintFormatted("\n→", []string{"blue", "bold"})
 	ux.PrintFormatted(" Authentication\n", []string{"white", "bold"})
-	if initData.APIKey == "" && (localRun || !noInputs) {
+	if initData.APIKey == "" && !noInputs && !localRun {
 		ux.PrintFormatted("  ⠿", []string{"blue", "bold"})
 		fmt.Print(" Enter API Key (You can find it in the Dashboard user settings https://app.pluralith.com/#/user/settings): ")
 		fmt.Scanln(&initData.APIKey) // Capture user input
 	}
 
-	// Run login routine and set credentials file
-	loginValid, loginErr := auth.RunLogin(initData.APIKey)
-	if loginErr != nil {
-		return false, initData, fmt.Errorf("failed to authenticate -> %v: %w", functionName, loginErr)
-	}
-	if !loginValid {
-		return false, initData, nil
+	// Run login routine and set credentials file if an API key was provided
+	if initData.APIKey != "" {
+		loginValid, loginErr := auth.RunLogin(initData.APIKey)
+		if loginErr != nil {
+			return false, initData, fmt.Errorf("failed to authenticate -> %v: %w", functionName, loginErr)
+		}
+		if !loginValid {
+			return false, initData, nil
+		}
 	}
 
 	if localRun {
